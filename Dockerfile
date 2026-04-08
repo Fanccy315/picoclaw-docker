@@ -25,15 +25,12 @@ RUN apk add --no-cache \
   curl \
   git \
   python3 \
-  py3-pip \
-  chromium \
+  ffmpeg \
   jq
 
-# Install Playwright browsers for agent-browser
-ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
+# Install agent-browser
 RUN npm install -g agent-browser && \
-    npx playwright install chromium && \
-    chmod -R o+rx $PLAYWRIGHT_BROWSERS_PATH
+  agent-browser install --with-deps
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
@@ -43,9 +40,6 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
 
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
-
-# Run onboard to create initial directories and config
-RUN /usr/local/bin/picoclaw onboard
 
 ENTRYPOINT ["picoclaw"]
 CMD ["gateway"]
