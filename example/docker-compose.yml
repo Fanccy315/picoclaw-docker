@@ -4,8 +4,7 @@ services:
     container_name: picoclaw-gateway
     restart: unless-stopped
     volumes:
-      - ./workspace:/root/.picoclaw/workspace
-      - ./config.json:/root/.picoclaw/config.json:ro
+      - .picoclaw:/root/.picoclaw
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       # NPM cache for faster MCP server installs
@@ -16,15 +15,14 @@ services:
     image: picoclaw
     container_name: picoclaw-cli
     volumes:
-      - ./workspace:/root/.picoclaw/workspace
-      - ./config.json:/root/.picoclaw/config.json:ro
+      - .picoclaw:/root/.picoclaw
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - picoclaw-npm-cache:/root/.npm
     network_mode: host
     stdin_open: true
     tty: true
-    entrypoint: ["/bin/bash"]
+    entrypoint: ["/bin/sh"]
 
 volumes:
   picoclaw-npm-cache: # Cache npm packages to speed up MCP server installations
