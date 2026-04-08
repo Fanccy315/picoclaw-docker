@@ -18,15 +18,18 @@ RUN make build
 # ============================================================
 # Stage 2: Node.js runtime with Python + MCP support
 # ============================================================
-FROM node:24-alpine3.23
+FROM node:24-bookworm
 
-RUN apk add --no-cache \
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
   git \
+  sudo \
   python3 \
   ffmpeg \
-  jq
+  jq && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install agent-browser
 RUN npm install -g agent-browser && \
