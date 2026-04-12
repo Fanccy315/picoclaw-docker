@@ -1,29 +1,9 @@
-# ============================================================
-# Stage 1: Build the picoclaw binary
-# ============================================================
-FROM golang:1.26.0-alpine AS builder
-
-RUN apk add --no-cache git make
-
-RUN git clone --depth 1 --branch v0.2.5 https://github.com/sipeed/picoclaw /src
-
-WORKDIR /src
-
-# Cache dependencies
-RUN go mod download
-
-# Build
-RUN make build
-
-# ============================================================
-# Stage 2: Node.js runtime with Python + MCP support
-# ============================================================
 FROM node:24-bookworm
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   ca-certificates \
-  curl \
+  curl wget \
   git \
   sudo \
   python3 \
@@ -41,8 +21,14 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
   ln -s /root/.local/bin/uvx /usr/local/bin/uvx && \
   uv --version
 
-# Copy binary
-COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
+# Install picoclaw
+RUN wget -O /tmp/picoclaw.tar.gz \
+  "https://github.com/sipeed/picoclaw/releases/download/v0.2.6/picoclaw_Linux_x86_64.tar.gz" && \
+  mkdir -p /tmp/picoclaw_extract && \
+  tar -xzf /tmp/picoclaw.tar.gz -C /tmp/picoclaw_extract && \
+  mv /tmp/picoclaw_extract/picoclaw /usr/local/bin/ && \
+  mv /tmp/picoclaw_extract/picoclaw-launcher /usr/local/bin/ && \
+  rm -rf /tmp/picoclaw.tar.gz /tmp/picoclaw_extract
 
 ENTRYPOINT ["picoclaw"]
 CMD ["gateway"]
