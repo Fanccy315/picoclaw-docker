@@ -23,7 +23,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
 
 # Install picoclaw
 RUN wget -O /tmp/picoclaw.tar.gz \
-  "https://github.com/sipeed/picoclaw/releases/download/v0.2.6/picoclaw_Linux_x86_64.tar.gz" && \
+  "https://github.com/sipeed/picoclaw/releases/download/v0.2.7/picoclaw_Linux_x86_64.tar.gz" && \
   mkdir -p /tmp/picoclaw_extract && \
   tar -xzf /tmp/picoclaw.tar.gz -C /tmp/picoclaw_extract && \
   mv /tmp/picoclaw_extract/picoclaw /usr/local/bin/ && \
